@@ -1,0 +1,19 @@
+# docker-compose.yaml
+version: "3.3"
+services:
+  deploy-handler:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: $HANDLER_RESTART
+    ports:
+      - $COMPOSE_PORTS
+    expose:
+      - $EXPOSE_PORT
+    container_name: $HANDLER_CONTAINER_NAME
+    environment:
+      - HANDLER_PORT=$HANDLER_PORT
+      - SSH_HOST=$SSH_HOST
+      - SSH_PORT=$SSH_PORT
+      - SSH_USERNAME=$SSH_USERNAME
+      - SSH_PASSWORD=$SSH_PASSWORD
