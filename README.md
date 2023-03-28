@@ -1,1 +1,1 @@
-# [ Express + SSH ] deploy over webhook handler app
+# [ Express + Bash + (Docker?) ] deploy over webhook handler app
