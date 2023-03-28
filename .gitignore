@@ -1,6 +1,9 @@
 # Data folder
 data
 
+# Config folder wuth secrets
+config
+
 # Logs
 logs
 *.log

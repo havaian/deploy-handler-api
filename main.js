@@ -2,19 +2,21 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const morgan = require("morgan");
+const path = require("path");
 
 // Create a new express app
 const app = express();
 
-// set up logger tools
+// Set up logger tools
 app.use(morgan("dev"));
 app.use((req, res, next) => {
   console.log(`${Date(Date.now())}`);
   next();
 });
 
-//  Instantiate dotenv config 
-dotenv.config();
+// Instantiate dotenv config & pass the path to .env file
+const env_path = path.resolve(__dirname, './env/.env');
+dotenv.config({ path: env_path });
 
 // Import routes
 app.use(require("./routes/routes.js"));

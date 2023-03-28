@@ -1,33 +1,26 @@
 const express = require("express");
 const router = express.Router();
 const controllers = require("../controllers/handler.controller.js");
-const secrets = require("../config/secrets.json");
 
-const deployer_aliases = {
-  "/deploy/crop-placement": {
-      "check_route": {
-        "Crop placement auto-deployer": "It's working 🙌"
-      },
-      "deploy_command": `cd /home/abror/crop-placement/ && echo ${process.env.CP_SSH_PASS} | sudo -S make dc_deploy`
-  }
-}
+const config = require("../config/secrets.json");
 
-for (let x in deployer_aliases) {
-    // Set up a checker route
-    router.get(x, (req ,res) => {
-      // console.log(req);
-      res.json(
-        deployer_aliases[x]["check_route"]
-      );
-    });
+for (let x in config) {
+  const pj_conf = config[x]["project_config"];
+  // Set up a checker route
+  router.get(pj_conf["route_name"], (req ,res) => {
+    // console.log(req);
+    res.json(
+      pj_conf["check_route"]
+    );
+  });
 
-    // Set up a webhook endpoint
-    router.post(x, (req, res) => {
-      // console.log(req);
-      // if (req.body.secret === secrets[x]) {
-        controllers.webhook_handler(deployer_aliases[x]["deploy_command"], req, res);
-      // }
-    });
+  // Set up a webhook endpoint
+  router.post(pj_conf["route_name"], (req, res) => {
+    // console.log(req);
+    // if (req.body.secret === config[x]["gh_webhook_secret"]) {
+      controllers.webhook_handler(pj_conf["deploy_command"], req, res);
+    // }
+  });
 }
 
 module.exports = router;

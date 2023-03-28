@@ -1,0 +1,15 @@
+# docker-compose.yaml
+version: "3.3"
+services:
+  deploy-handler:
+    build:
+      context: ../
+      dockerfile: ./Dockerfile
+    restart: $HANDLER_RESTART
+    ports:
+      - $COMPOSE_PORTS
+    expose:
+      - $EXPOSE_PORT
+    container_name: $HANDLER_CONTAINER_NAME
+    env_file:
+      - ../env/.env
