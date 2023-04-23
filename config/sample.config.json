@@ -1,0 +1,14 @@
+{
+    "project_name": {
+        "gh_webhook_secret": "some_secret_key_you_gonna_use_in_your_github_webhook_to_verify_the_post_requests",
+        "project_config": {
+            "route_name": "some_route_name",
+            "deploy_branch": "git_branch_for_checking",
+            "check_route": {
+              "Crop placement auto-deployer": "It's working 🙌"
+            },
+            "project_location": "path/to/project",
+            "deploy_command": "some_deployment_command"
+        }
+    }
+}
