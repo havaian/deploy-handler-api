@@ -17,26 +17,25 @@ app.use((req, res, next) => {
 
 
 //Get the raw body
-// app.use(bodyParser.json(
-//   {
-//       verify: (req, res, buf, encoding) => {
-//           if (buf && buf.length) {
-//           req.rawBody = buf.toString(encoding || "utf8");
-//           }
-//       },
-//   }
-// ));
-
-// const middleware = require("./middleware");
-
-// app.use(middleware.validatePayload);
+app.use(bodyParser.json(
+  {
+      verify: (req, res, buf, encoding) => {
+          if (buf && buf.length) {
+          req.rawBody = buf.toString(encoding || "utf8");
+          }
+      },
+  }
+));
 
 // Instantiate dotenv config & pass the path to .env file
 const env_path = path.resolve(__dirname, "./env/.env");
 dotenv.config({ path: env_path });
 
+// Importing validatePayload middleware function
+app.use(require("./middleware").validatePayload);
+
 // Import routes
-app.use(require("./routes/routes.js"));
+app.use(require("./routes/api.routes.js"));
 
 // Start the express app
 app.listen(process.env.EXPOSE_PORT, () => {

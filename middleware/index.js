@@ -1,39 +1,42 @@
 const crypto = require("crypto");
 
-const sigHeaderName = "X-Signature-SHA256";
-const sigHashAlg = "sha256";
-const sigPrefix = ""; //set this to your signature prefix if any
-
-const secrets = require("../config/config.json");
+const config = require("../config/config.json");
 
 //Validate payload
 exports.validatePayload = (req, res, next) => {
+    try {
+        if (req.method === "POST") {
+            const pj_conf = config[req.path];
+            const secret = pj_conf["gh_webhook_secret"];
 
-    // console.log(req);
+            // Data received, perform processing
+            const signature = `sha256=${crypto
+                .createHmac('sha256', secret)
+                .update(JSON.stringify(req.body))
+                .digest('hex')}`;
 
-    // for (let x in secrets) {
+            const isAllowed = req.headers['x-hub-signature-256'] === signature;
+            const body = req.body;
+            
+            const isBranch = body?.ref === `refs/heads/${pj_conf["deploy_branch"]}`;
 
-    //     const secret = secrets[x]["gh_webhook_secret"];
-
-    //     if(req.get(sigHeaderName)){
-    //         //Extract Signature header
-    //         const sig = Buffer.from(req.get(sigHeaderName) || "", "utf8");
-    
-    //         //Calculate HMAC
-    //         const hmac = crypto.createHmac(sigHashAlg, secret);
-    //         const digest = Buffer.from(sigPrefix + hmac.update(req.rawBody).digest("hex"), "utf8");
-    
-    //         //Compare HMACs
-    //         if (sig.length !== digest.length || !crypto.timingSafeEqual(digest, sig)) {
-    //             return res.status(401).send({
-    //                 message: `Request body digest (${digest}) did not match ${sigHeaderName} (${sig})`
-    //             });
-    //         }
-    //     }
-    
-    //     return next();
-    // }
-
+            if (isAllowed && isBranch) {
+                next();
+            } else {
+                if (!isAllowed || !isBranch) {
+                    !isBranch ? 
+                        console.log("❌ Branch not prod") && res.status(417).send("❌ Branch not prod") : 
+                        console.log("❌ Secret verification failed") && res.status(401).send("❌ Secret verification failed");
+                } 
+            }
+        } else {
+            next();
+        }
+    } catch (error) {
+        // Catch any errors that may occur during verification
+        console.log(error);
+        return res.status(400).send("❌ Bad Request");
+    }
 }
 
 exports.generateBackupName = (date) => {
