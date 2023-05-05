@@ -1,11 +1,11 @@
 const crypto = require("crypto");
 
-const config = require("../config/config.json");
+const config = require("../config/api.config.json");
 
 //Validate payload
 exports.validatePayload = (req, res, next) => {
     try {
-        if (req.method === "POST") {
+        if (req.method === "POST" && req.headers["user-agent"].includes("GitHub-Hookshot")) {
             const pj_conf = config[req.path];
             const secret = pj_conf["gh_webhook_secret"];
 

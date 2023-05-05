@@ -2,7 +2,7 @@
 data
 
 # Config folder wuth secrets
-config.json
+api.config.json
 !sample.config.json
 
 # Logs
@@ -110,4 +110,4 @@ dist
 # TernJS port file
 .tern-port
 
-config/config.json
+.vscode/
